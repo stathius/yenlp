@@ -14,7 +14,7 @@ def naive_bayes(pos_samples, neg_samples, ratio):
 
     return (NaiveBayesClassifier.train(train_samples), train_samples, test_samples)
 
-def get_classifier_stats(classifier, test_samples):
+def classifier_stats(classifier, test_samples):
     '''Prints statistics of a NLTK classifier'''
     print 'accuracy:', nltk.classify.util.accuracy(classifier, test_samples)
     classifier.show_most_informative_features()
@@ -23,9 +23,9 @@ def get_classifier_stats(classifier, test_samples):
     refsets = collections.defaultdict(set)
     testsets = collections.defaultdict(set)
 
-    for i, (feats, label) in enumerate(testfeats):
+    for i, (sample, label) in enumerate(test_samples):
         refsets[label].add(i)
-        observed = classifier.classify(feats)
+        observed = classifier.classify(sample)
         testsets[observed].add(i)
 
     print 'pos precision:', nltk.metrics.precision(refsets['pos'], testsets['pos'])

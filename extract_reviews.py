@@ -6,6 +6,8 @@ import json
 
 business_fn = 'yelp_academic_dataset_business.json'
 reviews_fn = 'yelp_academic_dataset_review.json'
+template_fn = 'yelp_{category}_reviews_{quantity}_{classif}.json'
+
 
 def get_bussiness_ids(category):
     with open(business_fn) as businesses:
@@ -17,11 +19,15 @@ def get_bussiness_ids(category):
     return business_ids
 
 
-def save_reviews(category, business_ids, quantity):
-    pos_fn = 'yelp_' + category.lower() + '_reviews_%s_pos.json' % quantity
-    neg_fn = 'yelp_' + category.lower() + '_reviews_%s_neg.json' % quantity
-    pos_file = open(pos_fn, 'w')
-    neg_file = open(neg_fn, 'w')
+def save_reviews(category, quantity):
+    '''Saves the given number of reviews of a specific category to two files, 
+    one for each class(pos/neg).'''
+    business_ids = get_bussiness_ids(category)
+    
+    pos_reviews = open(template_fn.format(category = category.lower(), 
+                                          quantity = quantity, classif = 'pos'), 'w')
+    neg_reviews = open(template_fn.format(category = category.lower(), 
+                                          quantity = quantity, classif = 'neg'), 'w')
 
     cnt_pos = 0;
     cnt_neg = 0;
@@ -29,18 +35,15 @@ def save_reviews(category, business_ids, quantity):
         for review in reviews:
             # stop when quantity is reached
             if (cnt_pos >= quantity and cnt_neg >= quantity):
-                return (pos_fn, neg_fn)
+                return None
             review = json.loads(review)
             if review['business_id'] in business_ids:
                 #discard 3 star ratings
                 if int(review['stars']) > 3 and cnt_pos < quantity:
-                    json.dump(review, pos_file)
-                    pos_file.write('\n')
+                    json.dump(review, pos_reviews)
+                    pos_reviews.write('\n')
                     cnt_pos += 1
-                    # print >> pos_file, review
                 elif int(review['stars']) < 3 and cnt_neg < quantity:
-                    json.dump(review, neg_file)
-                    neg_file.write('\n')
+                    json.dump(review, neg_reviews)
+                    neg_reviews.write('\n')
                     cnt_neg += 1
-                    # print >> neg_file, review
-

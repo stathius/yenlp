@@ -3,6 +3,7 @@
 #It will be used to identify restaurant business ids that will 
 #subsequently be used to extract restaurant related reviews
 import json
+import sys
 
 business_fn = 'yelp_academic_dataset_business.json'
 reviews_fn = 'yelp_academic_dataset_review.json'
@@ -28,7 +29,6 @@ def save_reviews(category, quantity):
                                           quantity = quantity, classif = 'pos'), 'w')
     neg_reviews = open(template_fn.format(category = category.lower(), 
                                           quantity = quantity, classif = 'neg'), 'w')
-
     cnt_pos = 0;
     cnt_neg = 0;
     with open(reviews_fn) as reviews:
@@ -47,3 +47,20 @@ def save_reviews(category, quantity):
                     json.dump(review, neg_reviews)
                     neg_reviews.write('\n')
                     cnt_neg += 1
+
+def main(argv):
+    if len(argv) != 2:
+        print 'Give category and quantity.'
+        sys.exit(2)
+    category = argv[0]
+    quantity = int(argv[1])
+    # load data
+    try:
+        print "Creating files with %s reviews of the '%s' category" % (quantity, category)
+        save_reviews(category, quantity)
+    except Exception:
+        print("Something went wrong.")
+        sys.exit(2)
+
+if __name__ == "__main__":
+   main(sys.argv[1:])

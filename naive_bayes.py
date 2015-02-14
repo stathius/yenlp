@@ -1,24 +1,29 @@
 import nltk.classify.util
 from nltk.classify import NaiveBayesClassifier
- 
-def naive_bayes(pos_samples, neg_samples, ratio):
-    '''Trains a naive bayes classifier with NLTK.
-    Input the positive and negative samples and a given train/test ratio.
-    Returns the classifier and the train/test sets.'''
-    neg_cutoff = int(len(neg_samples) * ratio)
-    pos_cutoff = int(len(pos_samples) * ratio)
+from sklearn import cross_validation
 
-    train_samples = neg_samples[:neg_cutoff] + pos_samples[:pos_cutoff]
-    test_samples  = neg_samples[neg_cutoff:] + pos_samples[pos_cutoff:]
-    print 'train on %d instances, test on %d instances' % (len(train_samples), len(test_samples))
-
-    return (NaiveBayesClassifier.train(train_samples), train_samples, test_samples)
+def naive_bayes(pos_samples, neg_samples, n_folds = 2):
+    '''Trains a naive bayes classifier with NLTK. It uses stratified 
+    n-fold validation. Inputs are the positive and negative samples and 
+    the number of folds. Returns the total accuracy and the classifier and 
+    the train/test sets of the last fold.'''
+    samples = pos_samples + neg_samples
+    labels = [label for (words, label) in samples]
+    cv = cross_validation.StratifiedKFold(labels, n_folds= n_folds, shuffle=True)
+    
+    print "%s-fold stratified cross-validation on %s samples" % (n_folds, len(samples))
+    accuracy = 0.0
+    for traincv, testcv in cv:
+        train_samples = samples[traincv[0]:traincv[len(traincv)-1]]
+        test_samples = samples[testcv[0]:testcv[len(testcv)-1]]
+        classifier = nltk.NaiveBayesClassifier.train(train_samples)
+        accuracy += nltk.classify.util.accuracy(classifier, test_samples)
+    accuracy /= n_folds
+    print "accuracy: ", accuracy
+    return (accuracy, classifier, train_samples, test_samples)
 
 def classifier_stats(classifier, test_samples):
-    '''Prints statistics of a NLTK classifier'''
-    print 'accuracy:', nltk.classify.util.accuracy(classifier, test_samples)
-    classifier.show_most_informative_features()
-    
+    '''Prints precision/recall statistics of a NLTK classifier'''
     import collections
     refsets = collections.defaultdict(set)
     testsets = collections.defaultdict(set)

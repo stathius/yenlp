@@ -27,7 +27,6 @@ def main(argv):
             print("The data for this category and quantity are not found.")
             sys.exit(2)
 
-        (pos_words, neg_words) = load_samples(category, quantity, stopword_filtered_words)
         (accuracy, classifier, train_set, test_set) = naive_bayes(pos_words, neg_words, n_folds)
         print "accuracy: %s\n" % accuracy
         classifier.show_most_informative_features()

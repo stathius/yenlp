@@ -48,6 +48,26 @@ def word_sense_cdf(word, context, wn_pos):
     else:
         return None
 
+def word_sense_similarity(word, context, dummy = None):
+    '''Another word sense disambiguation technique. It's VERY SLOW.
+    Adapted from: pythonhosted.org/sentiment_classifier'''
+    wordsynsets = wordnet.synsets(word)
+    bestScore = 0.0
+    result = None
+    for synset in wordsynsets:
+        for w in nltk.word_tokenize(context):
+            score = 0.0
+            for wsynset in wordnet.synsets(w):
+                sim = wordnet.path_similarity(wsynset, synset)
+                if(sim == None):
+                    continue
+                else:
+                    score += sim
+            if (score > bestScore):
+                bestScore = score
+                result = synset
+    return result
+
 def sentiwordnet_classify(text, wsd = word_sense_cdf):
     '''Classifies a text according to the sentiment analysis based
     on SentiWordNet.'''

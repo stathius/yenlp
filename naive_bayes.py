@@ -11,7 +11,6 @@ def naive_bayes(pos_samples, neg_samples, n_folds = 2):
     labels = [label for (words, label) in samples]
     cv = cross_validation.StratifiedKFold(labels, n_folds= n_folds, shuffle=True)
     
-    print "%s-fold stratified cross-validation on %s samples" % (n_folds, len(samples))
     accuracy = 0.0
     for traincv, testcv in cv:
         train_samples = samples[traincv[0]:traincv[len(traincv)-1]]
@@ -19,7 +18,6 @@ def naive_bayes(pos_samples, neg_samples, n_folds = 2):
         classifier = nltk.NaiveBayesClassifier.train(train_samples)
         accuracy += nltk.classify.util.accuracy(classifier, test_samples)
     accuracy /= n_folds
-    print "accuracy: ", accuracy
     return (accuracy, classifier, train_samples, test_samples)
 
 def classifier_stats(classifier, test_samples):

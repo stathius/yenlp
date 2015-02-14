@@ -24,7 +24,8 @@ def bigram_words(text, score_fn=BigramAssocMeasures.chi_sq, n=500):
     bigrams = bigram_finder.nbest(score_fn, n)
     return dict([(ngram, True) for ngram in itertools.chain(words, bigrams)])
 
-def untouched()
+def whole_text(text):
+    return text
 
 def tokenize(text):
     '''Splits a text to words, separates by space and punctuation, 

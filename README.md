@@ -61,6 +61,8 @@ A brief explanation on how to run the code.
 
 ### Dependencies
 
+Make sure you have the following libraries installed before running the code.
+
 * [NLTK](http://www.nltk.org)
 * [Scikit-Learn](http://scikit-learn.org/stable/install.html)
 

@@ -1,9 +1,9 @@
 ##Sentiment Analysis on [Yelp Dataset Challenge](http://www.yelp.com/dataset_challenge)
 
-### Scope 
-This is the Final Project for the [Data Mining course](http://www.cs.uoi.gr/~tsap/teaching/cs059/index-en.html) 
-taught in the Computer Science & Engineering department of the Univerisity of Ioannina during Fall 2014.
-For details checkout the [handout](http://www.cs.uoi.gr/~tsap/teaching/cs059/assignments/project-en.pdf).
+###Goal
+
+The objective of this project is to apply various sentiment analysis techniques(NLP) on the restaurant reviews and assess 
+whether they can correctly identify the reviews as positive or negative. 
 
 ### Yelp Dataset Challenge
 
@@ -27,12 +27,6 @@ The Challenge Dataset includes data from Phoenix, Las Vegas, Madison, Waterloo a
 
 This project is not a participation in the challenge. 
 
-###Goal
-
-The objective of this project is to apply various sentiment analysis techniques(NLP) on the restaurant reviews and assess 
-whether they can correctly identify the reviews as positive or negative. 
-
-
 ### Techniques
 
 Three different techniques will be assesed and compared:
@@ -45,7 +39,13 @@ Only a subset of the dataset will be used.
 
 ### Training and testing using the data set
 
-Training/testing on the dataset using bag of words and a NaiveBayes classifier...
+Training/testing on the dataset using bag of words and a NaiveBayes classifier. 
+Three different feature selection where implementes: 
+* single words
+* single words after removing stopwords
+* bigrams
+
+The evaluation of the classifier is done by stratified k-fold cross validation.
 
 ###Training with generic lexicons
 
@@ -54,3 +54,42 @@ WordNet & SentiWordNet...
 ###A pretrained state-of-the-art system
 
 Stanford's [CoreNLP](http://nlp.stanford.edu/sentiment/code.html)
+
+## Usage
+
+A brief explanation on how to run the code.
+
+### Dependencies
+
+Make sure you have the following libraries installed before running the code.
+
+* [NLTK](http://www.nltk.org)
+* [Scikit-Learn](http://scikit-learn.org/stable/install.html)
+
+Also you must have installed the *stopword corpora* of NLTK.
+To bring up the NLTK downloader, run the following in a python console.
+
+```
+import nltk
+nltk.download()
+```
+
+### Extracting reviews
+
+You need to provide the category of the businesses and the quantity of samples for each review class (pos/neg).
+The script creates two json files one for each class.
+
+```
+python extract_reviews.py 'Restaurants' 1000
+```
+
+### Naive Bayes
+
+You need to provide the category, the number of samples for each class and the number of folds for the k-fold cross validation.
+It trains one classifier for each feature extraction filter (single words, stopwords excluded, bigrams) and prints the overall accuracy.
+
+```
+python run_bayes 'Restaurants' 1000 2
+```
+
+

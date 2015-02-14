@@ -13,8 +13,6 @@ def main(argv):
     category = argv[0]
     quantity = int(argv[1])
     n_folds = int(argv[2])
-    # load data
-
 
     print "Category: '%s'\n" % category
     filters = [single_words, stopword_filtered_words, bigram_words]

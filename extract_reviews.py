@@ -1,7 +1,5 @@
 #Small script to get categories out of the business json
 #from Yelp Challenge dataset
-#It will be used to identify restaurant business ids that will 
-#subsequently be used to extract restaurant related reviews
 import json
 import sys
 
@@ -11,6 +9,7 @@ template_fn = 'yelp_{category}_reviews_{quantity}_{classif}.json'
 
 
 def get_bussiness_ids(category):
+    '''Gets all the (anonynimized)business ids for a given category'''
     with open(business_fn) as businesses:
         business_ids = []
         for business in businesses:

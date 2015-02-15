@@ -15,16 +15,14 @@ def wordnet_pos_code(tag):
     else:
         return ''
 
-def pos_tag(text):
-    '''POS tagging of a text'''
-    sentences = nltk.sent_tokenize(text)
+def pos_tag(sentence):
+    '''POS tagging of a sentence.'''
     tagged_words = []
-    for sentence in sentences:
-        tokens = nltk.word_tokenize(sentence)
-        tag_tuples = nltk.pos_tag(tokens)
-        for (string, tag) in tag_tuples:
-            token = {'word':string, 'pos':tag}            
-            tagged_words.append(token)    
+    tokens = nltk.word_tokenize(sentence)
+    tag_tuples = nltk.pos_tag(tokens)
+    for (string, tag) in tag_tuples:
+        token = {'word':string, 'pos':tag}            
+        tagged_words.append(token)    
     return tagged_words
 
 def word_sense_cdf(word, context, wn_pos):
@@ -68,17 +66,40 @@ def word_sense_similarity(word, context, dummy = None):
                 result = synset
     return result
 
-def sentiwordnet_classify(text, wsd = word_sense_cdf):
-    '''Classifies a text according to the sentiment analysis based
-    on SentiWordNet.'''
+def sentiwordnet_classify(text):
+    '''Breaks a multi sentence text to separate sentences.
+    This improves context for the word sense disambiguation.
+    Returns a class'''
+    score_tot = 0
+    score_tot_thr = 0
+    class_tot = 0
+    class_tot_thr = 0
+    sentences = nltk.sent_tokenize(text)
+    for sentence in sentences:
+        (score, score_thr) = sentence_score(sentence)
+        score_tot += score
+        score_tot_thr += score_thr
+
+    #Trust the thresholded value more when classifying
+    if score_tot_thr != 0:
+        clss = 'pos' if score_tot_thr > 0 else 'neg'
+    elif score_tot != 0:
+        clss = 'pos' if score_tot > 0 else 'neg'
+    else:
+        clss = None
+    return clss
+
+def sentence_score(text, threshold = 0.75, wsd = word_sense_cdf):
+    '''Classifies a phrase according to sentiment analysis based
+    on WordNet and SentiWordNet. It also computes a thresholded 
+    score by ignoring strongly objective words.'''
     tagged_words = pos_tag(text)
 
     obj_score = 0 # object score 
     pos_score=0 # positive score
     neg_score=0 #negative score
-    pos_score_tre=0
-    neg_score_tre=0
-    threshold = 0.75
+    pos_score_thr=0
+    neg_score_thr=0
 
     for word in tagged_words:
     #     print word
@@ -91,15 +112,7 @@ def sentiwordnet_classify(text, wsd = word_sense_cdf):
                     pos_score = pos_score + float(sent.pos_score())
                     neg_score = neg_score + float(sent.neg_score())
                     if sent.obj_score() < threshold:
-                        pos_score_tre = pos_score_tre + float(sent.pos_score())
-                        neg_score_tre = neg_score_tre + float(sent.neg_score())
+                        pos_score_thr = pos_score_thr + float(sent.pos_score())
+                        neg_score_thr = neg_score_thr + float(sent.neg_score())
 
-    #Trust the thresholded value more when classifying
-    if pos_score_tre != 0 or neg_score_tre !=0:
-        clss = 'pos' if pos_score_tre > neg_score_tre else 'neg'
-    elif pos_score != 0 or neg_score !=0:
-        clss = 'pos' if pos_score > neg_score else 'neg'
-    else:
-        clss = None
-        
-    return clss
+    return (pos_score - neg_score, pos_score_thr - neg_score_thr)

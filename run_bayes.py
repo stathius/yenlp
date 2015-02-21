@@ -15,7 +15,7 @@ def main(argv):
     n_folds = int(argv[2])
 
     print "Category: '%s'\n" % category
-    filters = [single_words, stopword_filtered_words, bigram_words]
+    filters = [single_words, stopword_filtered_words, bigrams, stopword_filtered_bigrams]
 
     for filt in filters:
         print "Filter: ", filt.__name__

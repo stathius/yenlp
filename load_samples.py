@@ -17,9 +17,17 @@ def stopword_filtered_words(text):
     stopset = set(stopwords.words('english'))
     return dict([(word, True) for word in tokenize(text) if word not in stopset])
 
-def bigram_words(text, score_fn=BigramAssocMeasures.chi_sq, n=500):
+def bigrams(text, score_fn=BigramAssocMeasures.chi_sq, n=500):
     '''Find the best n bigrams of a text by means of a give measure.'''
     words = tokenize(text)
+    bigram_finder = BigramCollocationFinder.from_words(words)
+    bigrams = bigram_finder.nbest(score_fn, n)
+    return dict([(ngram, True) for ngram in itertools.chain(words, bigrams)])
+
+def stopword_filtered_bigrams(text, score_fn=BigramAssocMeasures.chi_sq, n=500):
+    '''Removes the stopwords and computes the best bigrams'''
+    stopset = set(stopwords.words('english'))
+    words = [word for word in tokenize(text) if word not in stopset]
     bigram_finder = BigramCollocationFinder.from_words(words)
     bigrams = bigram_finder.nbest(score_fn, n)
     return dict([(ngram, True) for ngram in itertools.chain(words, bigrams)])

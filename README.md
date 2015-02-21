@@ -93,3 +93,6 @@ python run_bayes 'Restaurants' 1000 2
 ```
 
 
+### Scope 
+This is a project for the [Data Mining course](http://www.cs.uoi.gr/~tsap/teaching/cs059/index-en.html) taught in the Computer Science & Engineering department of the Univerisity of Ioannina during the fall semester 2014/2015. 
+For details checkout the [handout](http://www.cs.uoi.gr/~tsap/teaching/cs059/assignments/project-en.pdf).

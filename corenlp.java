@@ -61,6 +61,7 @@ public class corenlp {
 		}
 	}
 
+	// Parses the JSON line and extracts the  review text
 	private static String readJSON(String str) throws Exception{
 		JSONParser jsonParser = new JSONParser();
 		JSONObject jsonObject = (JSONObject) jsonParser.parse(str);
@@ -68,6 +69,15 @@ public class corenlp {
 		return (String) jsonObject.get("text");
 	}
 	
+	/**
+	 * Computes the sentiment estimation of the whole text.
+	 * It iterates over all the sentences and gets a sentiment for each one.
+	 * A sentiment score of 0 or 1 is negative, 2 neutral and 3 or 4 positive.
+	 * The aggregation is being doe with three different modes.
+	 * The first is the average of all the sentences. The second uses the 
+	 * each sentence's length as weight and the third counts the number of 
+	 * positive/negative sentences.
+	**/
 	public static int[] findSentiment(String text) {
 		double sentimentAvg = 0; // Average sentiment of all sentences.
 		double sentimentWeight = 0; // Weight each sentence by length.

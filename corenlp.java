@@ -5,6 +5,8 @@ import java.io.File;
 import java.io.IOException;
 import java.util.Properties;
 
+import java.util.Arrays;
+
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
@@ -22,23 +24,26 @@ public class corenlp {
 	static StanfordCoreNLP pipeline;
 	// For the next variables the index is the mode of text's class
 	// estimation which can be: [averaged, weighted, counted]
-	static int[] pos = {0, 0, 0};
-	static int[] neg = {0, 0, 0};
-	static int[] unknown = {0, 0, 0};
+	static int[] pos;
+	static int[] neg;
+	static int[] unknown;
 	static final double[] NEUTRAL = {2.0, 2.0, 0.0};
 
 	private static void readFile(File fin) throws Exception {
 		FileInputStream fis = new FileInputStream(fin);
-	 
 		BufferedReader br = new BufferedReader(new InputStreamReader(fis));
 	 
 		String line = null;
 		String reviewText;
+		double[] scores;
+		// Reset counters
+		pos = new int[]{0, 0, 0};
+		neg = new int[]{0, 0, 0};
+		unknown = new int[]{0, 0, 0};
 		while ((line = br.readLine()) != null) {
 			reviewText = readJSON(line);
-			findSentiment(reviewText);
-			// System.out.println("Text: " + reviewText);
-			// System.out.println("Final Rating: " + findSentiment(reviewText) + "\n");
+			scores = findSentiment(reviewText);
+			updateCounts(scores);
 		}
 	 
 		br.close();
@@ -48,9 +53,9 @@ public class corenlp {
 	 * Takes the scores for average, weighted and counted sentiment estimates
 	 * and updates the positive, negative and unknown counters accordingly
 	**/
-	private static void updateCounts(int[] scores) {
+	private static void updateCounts(double[] scores) {
 		// The splitting point is NEUTRAL which is different in each case
-		for(int i = 0; i < len; i++) {
+		for(int i = 0; i < scores.length; i++) {
 			if(scores[i] > NEUTRAL[i]) {
 				pos[i]++;
 			} else if (scores[i] < NEUTRAL[i]) {
@@ -78,7 +83,7 @@ public class corenlp {
 	 * each sentence's length as weight and the third counts the number of 
 	 * positive/negative sentences.
 	**/
-	public static int[] findSentiment(String text) {
+	public static double[] findSentiment(String text) {
 		double sentimentAvg = 0; // Average sentiment of all sentences.
 		double sentimentWeight = 0; // Weight each sentence by length.
 		double sentimentCount = 0; // Count pos/neg sentences, ignoring neutral.
@@ -95,9 +100,6 @@ public class corenlp {
 				int sentiment = RNNCoreAnnotations.getPredictedClass(tree);
 				String sentenceText = sentence.toString();
 
-				// System.out.println(sentence + " | length " +
-				// 	sentenceText.length() + " | score " + sentiment);
-
 				count++;
 				weight += sentenceText.length();
 				sentimentAvg += sentiment;
@@ -112,16 +114,18 @@ public class corenlp {
 			System.out.println("Weighted: " + ((sentimentWeight / weight)));
 			System.out.println("Count: " + (sentimentCount));
 			System.out.println("\n");
-			return new int[]{1,1,1};
+			return new double[]{sentimentAvg / (double)count, 
+				sentimentWeight / weight, 
+				sentimentCount};
 		} else {
-			return new int[]{0, 0, 0};
+			return new double[]{2, 2, 0};
 		}
 	}
 
 	public static void main(String[] args) {
 
 		String category = "restaurants";
-		String quantity = "500";
+		String quantity = "10";
 		String clss = "pos";
 		String filePath = new String("yelp_" + category + "_reviews_" + quantity + "_" + clss + ".json");
 		File fin = new File(filePath);
@@ -137,5 +141,9 @@ public class corenlp {
 			System.out.println("There was a problem: ");
 			ex.printStackTrace();
 		}
+
+		System.out.println(Arrays.toString(pos));
+		System.out.println(Arrays.toString(neg));
+		System.out.println(Arrays.toString(unknown));
 	}
 }

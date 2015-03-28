@@ -20,9 +20,12 @@ import edu.stanford.nlp.util.CoreMap;
 public class corenlp {
 
 	static StanfordCoreNLP pipeline;
+	// For the next variables the index is the mode of text's class
+	// estimation which can be: [averaged, weighted, counted]
 	static int[] pos = {0, 0, 0};
 	static int[] neg = {0, 0, 0};
 	static int[] unknown = {0, 0, 0};
+	static final double[] NEUTRAL = {2.0, 2.0, 0.0};
 
 	private static void readFile(File fin) throws Exception {
 		FileInputStream fis = new FileInputStream(fin);
@@ -39,6 +42,23 @@ public class corenlp {
 		}
 	 
 		br.close();
+	}
+
+	/**
+	 * Takes the scores for average, weighted and counted sentiment estimates
+	 * and updates the positive, negative and unknown counters accordingly
+	**/
+	private static void updateCounts(int[] scores) {
+		// The splitting point is NEUTRAL which is different in each case
+		for(int i = 0; i < len; i++) {
+			if(scores[i] > NEUTRAL[i]) {
+				pos[i]++;
+			} else if (scores[i] < NEUTRAL[i]) {
+				neg[i]++;
+			} else {
+				unknown[i] ++;
+			}
+		}
 	}
 
 	private static String readJSON(String str) throws Exception{

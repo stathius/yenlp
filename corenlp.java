@@ -118,7 +118,7 @@ public class corenlp {
 				sentimentWeight / weight, 
 				sentimentCount};
 		} else {
-			return new double[]{2, 2, 0};
+			return NEUTRAL;
 		}
 	}
 

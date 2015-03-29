@@ -4,6 +4,7 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
 import java.util.Properties;
+import java.util.Arrays;
 
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
@@ -99,6 +100,7 @@ public class corenlp {
 				int sentiment = RNNCoreAnnotations.getPredictedClass(tree);
 				String sentenceText = sentence.toString();
 
+				// System.out.println(sentenceText + " " + sentiment + "\n");
 				count++;
 				weight += sentenceText.length();
 				sentimentAvg += sentiment;
@@ -125,11 +127,12 @@ public class corenlp {
 		pipeline = new StanfordCoreNLP(props);
 
 		String category = "restaurants";
-		String quantity = "10";
+		String quantity = "5000";
 
 		String[] clss = {"pos", "neg"};
 		String filePath;
 		File fin;
+		double[] accuracy = {0.0, 0.0, 0.0};
 		for (int i = 0; i < clss.length; i++) {
 			filePath = new String("yelp_" + category + "_reviews_" + quantity + "_" + clss[i] + ".json");
 			fin = new File(filePath);
@@ -141,13 +144,19 @@ public class corenlp {
 				ex.printStackTrace();
 			}
 
-			for (int i = 0; i < methods.length; i++) {
-				System.out.println(methods[i]);
-				System.out.println("Positive: " + (double)pos[i] / (pos[i] + neg[i] + unknown[i]));
-				System.out.println("Negative: " + (double)neg[i] / (pos[i] + neg[i] + unknown[i]));
+			System.out.println("\nClass: " + clss[i]);
+			double acc = 0;
+			for (int j = 0; j < methods.length; j++) {
+				if (clss[i].equals("pos")) {
+					acc = (double)pos[j] / (pos[j] + neg[j] + unknown[j]);
+				} else if (clss[i].equals("neg")) {
+					acc = (double)neg[j] / (pos[j] + neg[j] + unknown[j]);
+				}
+				accuracy[j] +=  acc / 2; // Given that the pos/neg examples are equal
+				System.out.println(methods[j] + ": " + acc);
 			}	
 		}
 
-
+		System.out.println("Accuracy:" + Arrays.toString(accuracy));
 	}
 }

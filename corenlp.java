@@ -41,7 +41,7 @@ public class corenlp {
 		unknown = new int[]{0, 0, 0};
 		while ((line = br.readLine()) != null) {
 			reviewText = readJSON(line);
-			scores = findSentiment(reviewText);
+			scores = getSentimentScores(reviewText);
 			updateCounts(scores);
 		}
 	 
@@ -82,7 +82,7 @@ public class corenlp {
 	 * each sentence's length as weight and the third counts the number of 
 	 * positive/negative sentences.
 	**/
-	public static double[] findSentiment(String text) {
+	public static double[] getSentimentScores(String text) {
 		double sentimentAvg = 0; // Average sentiment of all sentences.
 		double sentimentWeight = 0; // Weight each sentence by length.
 		double sentimentCount = 0; // Count pos/neg sentences, ignoring neutral.
@@ -119,28 +119,34 @@ public class corenlp {
 
 	public static void main(String[] args) {
 
-		String category = "restaurants";
-		String quantity = "10";
-		String clss = "pos";
-		String filePath = new String("yelp_" + category + "_reviews_" + quantity + "_" + clss + ".json");
-		File fin = new File(filePath);
-
 		// The CoreNLP pipeline
 		Properties props = new Properties();
 		props.setProperty("annotators", "tokenize, ssplit, parse, sentiment");
 		pipeline = new StanfordCoreNLP(props);
 
-		try {
-			readFile(fin);	
-		} catch (Exception ex) {
-			System.out.println("There was a problem: ");
-			ex.printStackTrace();
+		String category = "restaurants";
+		String quantity = "10";
+
+		String[] clss = {"pos", "neg"};
+		
+		for (int i = 0; i < clss.length; i++) {
+			String filePath = new String("yelp_" + category + "_reviews_" + quantity + "_" + clss + ".json");
+			File fin = new File(filePath);
+
+			try {
+				readFile(fin);	
+			} catch (Exception ex) {
+				System.out.println("There was a problem: ");
+				ex.printStackTrace();
+			}
+
+			for (int i=0; i < methods.length; i++) {
+				System.out.println(methods[i]);
+				System.out.println("Positive: " + (double)pos[i] / (pos[i] + neg[i] + unknown[i]));
+				System.out.println("Negative: " + (double)neg[i] / (pos[i] + neg[i] + unknown[i]));
+			}	
 		}
 
-		for (int i=0; i < methods.length; i++) {
-			System.out.println(methods[i]);
-			System.out.println("Positive: " + (double)pos[i] / (pos[i] + neg[i] + unknown[i]));
-			System.out.println("Negative: " + (double)neg[i] / (pos[i] + neg[i] + unknown[i]));
-		}
+
 	}
 }

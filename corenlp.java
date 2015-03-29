@@ -28,7 +28,7 @@ public class corenlp {
 	static int[] unknown;
 	static final double[] NEUTRAL = {2.0, 2.0, 0.0};
 
-	private static void readFile(File fin) throws Exception {
+	private static void getFileScores(File fin) throws Exception {
 		FileInputStream fis = new FileInputStream(fin);
 		BufferedReader br = new BufferedReader(new InputStreamReader(fis));
 	 
@@ -128,19 +128,20 @@ public class corenlp {
 		String quantity = "10";
 
 		String[] clss = {"pos", "neg"};
-		
+		String filePath;
+		File fin;
 		for (int i = 0; i < clss.length; i++) {
-			String filePath = new String("yelp_" + category + "_reviews_" + quantity + "_" + clss[i] + ".json");
-			File fin = new File(filePath);
+			filePath = new String("yelp_" + category + "_reviews_" + quantity + "_" + clss[i] + ".json");
+			fin = new File(filePath);
 
 			try {
-				readFile(fin);	
+				getFileScores(fin);	
 			} catch (Exception ex) {
 				System.out.println("There was a problem: ");
 				ex.printStackTrace();
 			}
 
-			for (int i=0; i < methods.length; i++) {
+			for (int i = 0; i < methods.length; i++) {
 				System.out.println(methods[i]);
 				System.out.println("Positive: " + (double)pos[i] / (pos[i] + neg[i] + unknown[i]));
 				System.out.println("Negative: " + (double)neg[i] / (pos[i] + neg[i] + unknown[i]));

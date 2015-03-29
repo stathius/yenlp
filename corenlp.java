@@ -121,13 +121,21 @@ public class corenlp {
 
 	public static void main(String[] args) {
 
+		String category = null;
+		String quantity = null;
+
+		if (args.length != 2) {
+	        System.out.println("Usage: java corenlp <category> <quantity>");
+	        System.exit(0);
+		} else {
+			category = args[0];
+			quantity = args[1];
+		}
+
 		// The CoreNLP pipeline
 		Properties props = new Properties();
 		props.setProperty("annotators", "tokenize, ssplit, parse, sentiment");
 		pipeline = new StanfordCoreNLP(props);
-
-		String category = "restaurants";
-		String quantity = "5000";
 
 		String[] clss = {"pos", "neg"};
 		String filePath;
@@ -142,8 +150,10 @@ public class corenlp {
 			} catch (Exception ex) {
 				System.out.println("There was a problem: ");
 				ex.printStackTrace();
+				System.exit(0);
 			}
 
+			System.out.println("\nCategory: " + category + "\tQuantity:" + quantity);
 			System.out.println("\nClass: " + clss[i]);
 			double acc = 0;
 			for (int j = 0; j < methods.length; j++) {

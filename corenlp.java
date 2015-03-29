@@ -130,7 +130,7 @@ public class corenlp {
 		String[] clss = {"pos", "neg"};
 		
 		for (int i = 0; i < clss.length; i++) {
-			String filePath = new String("yelp_" + category + "_reviews_" + quantity + "_" + clss + ".json");
+			String filePath = new String("yelp_" + category + "_reviews_" + quantity + "_" + clss[i] + ".json");
 			File fin = new File(filePath);
 
 			try {

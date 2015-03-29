@@ -5,8 +5,6 @@ import java.io.File;
 import java.io.IOException;
 import java.util.Properties;
 
-import java.util.Arrays;
-
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
@@ -24,6 +22,7 @@ public class corenlp {
 	static StanfordCoreNLP pipeline;
 	// For the next variables the index is the mode of text's class
 	// estimation which can be: [averaged, weighted, counted]
+	static String[] methods = {"Average", "Weighted", "Counts"};
 	static int[] pos;
 	static int[] neg;
 	static int[] unknown;
@@ -110,10 +109,6 @@ public class corenlp {
 					sentimentCount--;
 			}
 
-			System.out.println("Avg: " + ((sentimentAvg / count)));
-			System.out.println("Weighted: " + ((sentimentWeight / weight)));
-			System.out.println("Count: " + (sentimentCount));
-			System.out.println("\n");
 			return new double[]{sentimentAvg / (double)count, 
 				sentimentWeight / weight, 
 				sentimentCount};
@@ -142,8 +137,10 @@ public class corenlp {
 			ex.printStackTrace();
 		}
 
-		System.out.println(Arrays.toString(pos));
-		System.out.println(Arrays.toString(neg));
-		System.out.println(Arrays.toString(unknown));
+		for (int i=0; i < methods.length; i++) {
+			System.out.println(methods[i]);
+			System.out.println("Positive: " + (double)pos[i] / (pos[i] + neg[i] + unknown[i]));
+			System.out.println("Negative: " + (double)neg[i] / (pos[i] + neg[i] + unknown[i]));
+		}
 	}
 }

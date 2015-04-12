@@ -1,4 +1,6 @@
-##Sentiment Analysis on [Yelp Dataset Challenge](http://www.yelp.com/dataset_challenge)
+##Comparison of open source NLP tools for sentiment analysis on [Yelp Dataset Challenge](http://www.yelp.com/dataset_challenge)
+
+For the results check the blogpost [here](fotiad.is/blog/sentiment-analysis-comparison/).
 
 ### Scope 
 This is a project for the [Data Mining course](http://www.cs.uoi.gr/~tsap/teaching/cs059/index-en.html) taught in the undergraduate programme of the Computer Science & Engineering department of the Univerisity of Ioannina during the fall semester 2014/2015. 
@@ -31,37 +33,17 @@ The Challenge Dataset includes data from Phoenix, Las Vegas, Madison, Waterloo a
 
 This project is not a participation in the challenge. 
 
-### Techniques
+### Open source tools
 
-Three different techniques will be assesed and compared:
+Three different open source tools have been used and assessed:
 
-* Training and testing using the dataset 
-* Training with generic lexicons
-* A pretrained state-of-the-art system
-
-Only a subset of the dataset will be used.
-
-### Training and testing using the data set
-
-Training/testing on the dataset using bag of words and a NaiveBayes classifier. 
-Three different feature selection where implementes: 
-* single words
-* single words after removing stopwords
-* bigrams
-
-The evaluation of the classifier is done by stratified k-fold cross validation.
-
-###Training with generic lexicons
-
-WordNet & SentiWordNet...
-
-###A pretrained state-of-the-art system
-
-Stanford's [CoreNLP](http://nlp.stanford.edu/sentiment/code.html)
+* Training and testing using the dataset on a Naive Bayes classifier
+* Training with generic lexicons such as WordNet and SentiWordNet
+* Stanford's CoreNLP
 
 ## Usage
 
-A brief explanation on how to run the code.
+The code can be found in [github](). A brief explanation on how to run the code.
 
 ### Dependencies
 
@@ -83,7 +65,7 @@ nltk.download()
 
 ### Extracting reviews
 
-**This must be done before runing any of the methods below.**
+**This must be done before runing any of the classifiers below.**
 
 You need to provide the category of the businesses and the quantity of samples for each review class (pos/neg).
 The script creates two json files one for each class.
@@ -98,7 +80,7 @@ You need to provide the category, the number of samples for each class and the n
 It trains one classifier for each feature extraction filter (single words, stopwords removal, bigrams, bigrams & stopwords removal) and prints the overall accuracy.
 
 ```
-python run_bayes 'Restaurants' 1000 2
+python run_bayes 'Restaurants' 1000 5
 ```
 
 ### SentiwordNet
@@ -123,5 +105,4 @@ Then run the compiled class providing the category and number of samples.
 
 ```
 java -cp ".:PATH_TO_SIMPLE_JSON/*:PATH_TO_CORENLP/*" corenlp restaurants 1000
-
 ```

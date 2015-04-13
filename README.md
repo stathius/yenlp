@@ -1,6 +1,6 @@
 ##Comparison of open source NLP tools for sentiment analysis on [Yelp Dataset Challenge](http://www.yelp.com/dataset_challenge)
 
-For the results check the blogpost [here](fotiad.is/blog/sentiment-analysis-comparison/).
+For the results check the blogpost [here](http://fotiad.is/blog/sentiment-analysis-comparison/).
 
 ### Scope 
 This is a project for the [Data Mining course](http://www.cs.uoi.gr/~tsap/teaching/cs059/index-en.html) taught in the undergraduate programme of the Computer Science & Engineering department of the Univerisity of Ioannina during the fall semester 2014/2015. 
